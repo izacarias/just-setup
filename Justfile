@@ -54,6 +54,34 @@ install-wallpapers:
 	echo "✓ Wallpapers installed to $dest"
 
 
+fix-display-position:
+	#!/usr/bin/env bash
+	set -euo pipefail
+	dest=/var/lib/gdm/.config/
+	sudo mkdir -p $dest
+	sudo cp ~/.config/monitors.xml /var/lib/gdm/.config/
+	sudo chown gdm:gdm /var/lib/gdm/.config/monitors.xml
+
+
+# Fix rendering of MS Fonts in Firefox
+fix-fonts:
+	#!/usr/bin/env bash
+	set -euo pipefail
+	mkdir -p ~/.config/fontconfig/conf.d
+	touch ~/.config/fontconfig/conf.d/20-no-embedded.conf
+	tee ~/.config/fontconfig/conf.d/20-no-embedded.conf << EOF
+	<?xml version="1.0"?>
+	<!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">
+	<fontconfig>
+	  <match target="font">
+	    <edit name="embeddedbitmap" mode="assign">
+	      <bool>false</bool>
+	    </edit>
+	  </match>
+	</fontconfig>
+	EOF
+
+
 # Check if a flatpak app is installed
 [private]
 [no-exit-message]
